@@ -1,0 +1,74 @@
+﻿@page "/sbmsdetail"
+@using SBMSBlazorServerApp.Data
+@using SBMSBlazorServerApp.Models
+@inject WeatherForecastService ForecastService
+
+<PageTitle>SBMS 상세</PageTitle>
+
+<h1>생산 계획 상세 표시</h1>
+
+
+@if (dtllists == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>Record 수 = @dtllists.Count</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>WO번호</th>
+                <th>생산구분</th>
+                <th>생산계획버전</th>
+                <th>공정순서</th>
+                <th>공정코드</th>
+                <th>작업일차일수</th>
+                <th>작업시작일</th>
+                <th>작업종료일</th>
+                <th>토요근무여부</th>
+                <th>작업일자</th>
+                <th>등록자사번</th>
+                <th>등록일자</th>
+                <th>수정자사번</th>
+                <th>수정일자</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dtllist in dtllists)
+            {
+                <tr>
+                    <td>@dtllist.WoNo</td>
+                    <td>@dtllist.TbCd</td>
+                    <td>@dtllist.PpVer</td>
+                    <td>@dtllist.ProcSeq</td>
+                    <td>@dtllist.ProcCd</td>
+                    <td>@dtllist.WorkDdayDcnt</td>
+                    <td>@dtllist.WorkFrmDt</td>
+                    <td>@dtllist.WorkToDt</td>
+                    <td>@dtllist.SatWorkYn</td>
+                    <td>@dtllist.WorkDdays</td>
+                    <td>@dtllist.CrtrEmpno</td>
+                    <td>@dtllist.CrtnDt</td>
+                    <td>@dtllist.UpdrEmpno</td>
+                    <td>@dtllist.UpdtDt</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}
+
+@code {
+    private List<Models.PdnPlanDtl>? dtllists;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // forecasts = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        using (var db = new SbmsdevContext())
+        {
+            var dtls = db.PdnPlanDtls.ToList();
+            dtllists = dtls;
+        }
+    }
+}

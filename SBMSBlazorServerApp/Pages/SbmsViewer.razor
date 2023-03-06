@@ -1,0 +1,127 @@
+﻿@page "/sbmsviewer"
+@using SBMSBlazorServerApp.Data
+@using SBMSBlazorServerApp.Models
+@inject WeatherForecastService ForecastService
+
+<PageTitle>SBMS Viewer</PageTitle>
+
+<h1>생산 계획 헤더 표시</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>Record 수 = @forecasts.Count</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>1.WO번호</th>
+                <th>생산구분</th>
+                <th>생산계획버전</th>
+                <th>EQ번호</th>
+                <th>공정타입코드</th>
+                <th>6.생산시작일</th>
+                <th>기구업체코드</th>
+                <th>전장업체코드</th>
+                <th>프레임업체코드</th>
+                <th>블럭업체코드</th>
+                <th>11.FITTING업체코드</th>
+                <th>RESERVOIR업체코드</th>
+                <th>고압인증일자</th>
+                <th>전장자재입고일자</th>
+                <th>기구자재입고일자</th>
+                <th>16.전장생산완료일자</th>
+                <th>기구생산완료일자</th>
+                <th>생산완료일자</th>
+                <th>생산계획확정여부</th>
+                <th>FSC코드</th>
+                <th>21.출하요청일</th>
+                <th>WO취소여부</th>
+                <th>고객코드</th>
+                <th>EndUser</th>
+                <th>LineCode</th>
+                <th>26.담당자사번</th>
+                <th>최종계획여부</th>
+                <th>메일전송여부</th>
+                <th>ERP전송상태코드</th>
+                <th>31.등록자사번</th>
+                <th>등록일자</th>
+                <th>수정자사번</th>
+                <th>수정일자</th>
+           </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.WoNo</td>
+                    <td>@forecast.TbCd</td>
+                    <td>@forecast.PpVer</td>
+                    <td>@forecast.EqNo</td>
+                    <td>@forecast.ProcTypeCd</td>
+                    <td>@forecast.PdnFrmDt</td>
+                    <td>@forecast.MechanicCmpyCd</td>
+                    <td>@forecast.ElectricCmpyCd</td>
+                    <td>@forecast.FrameCmpyCd</td>
+                    <td>@forecast.BlockCmpyCd</td>
+                    <td>@forecast.FittingCmpyCd</td>
+                    <td>@forecast.ReservoirCmpyCd</td>
+                    <td>@forecast.HpCertifiCmplYn</td>
+                    <td>@forecast.ElecMtrlRcptDt</td>
+                    <td>@forecast.MechMtrlRcptDt</td>
+                    <td>@forecast.ElecPdnCmplDt</td>
+                    <td>@forecast.MechPdnCmplDt</td>
+                    <td>@forecast.PdnCmplDt</td>
+                    <td>@forecast.PdnSchedCnfmYn</td>
+                    <td>@forecast.FscCd</td>
+                    <td>@forecast.DueDt</td>
+                    <td>@forecast.WoClsYn</td>
+                    <td>@forecast.CustCd</td>
+                    <td>@forecast.EndUser</td>
+                    <td>@forecast.LineCd</td>
+                    <td>@forecast.SaleChgrEmpno</td>
+                    <td>@forecast.LastPlanYn</td>
+                    <td>@forecast.MailTrnsYn</td>
+                    <td>@forecast.ErpTransSttsCd</td>
+                    <td>@forecast.CrtrEmpno</td>
+                    <td>@forecast.CrtnDt</td>
+                    <td>@forecast.UpdrEmpno</td>
+                    <td>@forecast.UpdtDt</td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+}
+
+@code {
+
+    private List<Models.PdnPlanHdr>? forecasts;
+    private List<Models.PdnPlanDtl>? dtllists;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // forecasts = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        using (var db = new SbmsdevContext())
+        {
+            //var hdrs = (from n in db.PdnPlanHdrs select n);
+            //var hdrs = db.PdnPlanHdrs.Where(n => n.CustCd == "1102").Select(n => n).ToList();
+            var hdrs = db.PdnPlanHdrs.Where(n =>  n.CustCd.Length < 4).Select(n => n).ToList();
+            forecasts = hdrs;
+            String WoNo;
+            string FscCd;
+            foreach (var hdr in hdrs)
+            {
+                WoNo = hdr.WoNo;
+                FscCd = hdr.FscCd;
+                Console.WriteLine(WoNo, FscCd);
+            }
+        }
+
+    }
+}
